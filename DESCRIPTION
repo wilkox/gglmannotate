@@ -1,0 +1,17 @@
+Package: gglmannotate
+Title: Annotate a ggplot with a description of a linear model
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "David",
+           family = "Wilkins",
+           role = c("aut", "cre"),
+           email = "david@wilkox.org")
+Description: This package is intended to make it easier to quickly add some
+  information about a linear model to a ggplot2 plot.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: 
+    ggplot2 (>= 2.2.1),
+    ggfittext (>= 0.6.0)
