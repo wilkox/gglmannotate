@@ -3,3 +3,5 @@
 export(geom_lmannotate)
 import(ggfittext)
 import(grid)
+importFrom(glue,glue)
+importFrom(stringr,str_replace)

@@ -6,14 +6,15 @@
 \usage{
 geom_lmannotate(mapping = NULL, data = NULL, stat = "identity",
   position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, facet_mode = FALSE, ...)
+  inherit.aes = TRUE, glue_exp = NULL, ...)
 }
 \arguments{
 \item{mapping, data, stat, position, na.rm, show.legend, inherit.aes, ...}{As
 standard for ggplot2}
 
-\item{facet_mode}{If TRUE (FALSE by default), will draw every annotation in
-the top right corner regardless of how many groups there are}
+\item{glue_exp}{An expression to be parsed by `glue::glue()`, to form the
+annotation describing each linear model. The fitted model object returned by
+`lm()` is available as the variable `model`}
 }
 \description{
 Add an annotation describing a linear model to a ggplot2 plot

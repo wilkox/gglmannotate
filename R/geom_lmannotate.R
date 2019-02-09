@@ -38,6 +38,8 @@ geom_lmannotate <- function(
 #' @noRd
 #' @import grid
 #' @import ggfittext
+#' @importFrom glue glue
+#' @importFrom stringr str_replace
 GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
   required_aes = c("x", "y"),
   
@@ -75,8 +77,6 @@ GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
 
     # Fit the lm
     model <- lm(y ~ x, data)
-    glance <- broom::glance(lm(y ~ x, data))
-    tidy <- broom::tidy(lm(y ~ x, data))
 
     # Build a description of the model
     xxx <- stringr::str_replace("x", "x", "x")
