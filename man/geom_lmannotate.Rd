@@ -6,7 +6,9 @@
 \usage{
 geom_lmannotate(mapping = NULL, data = NULL, stat = "identity",
   position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, glue_exp = NULL, ...)
+  inherit.aes = TRUE, glue_exp = NULL, padding.x = grid::unit(1,
+  "mm"), padding.y = grid::unit(0.1, "lines"), place = "topright",
+  region = NULL, min.size = 0, grow = TRUE, reflow = FALSE, ...)
 }
 \arguments{
 \item{mapping, data, stat, position, na.rm, show.legend, inherit.aes, ...}{As
@@ -15,7 +17,52 @@ standard for ggplot2}
 \item{glue_exp}{An expression to be parsed by `glue::glue()`, to form the
 annotation describing each linear model. The fitted model object returned by
 `lm()` is available as the variable `model`}
+
+\item{padding.x, padding.y}{`grid::unit` object, giving horizontal and vertical
+padding around the text. Defaults to 1 mm and 0.1 lines respectively.}
+
+\item{place}{Annotations will stick to this corner of their drawing area.
+Default is "topright"; other options are "right", "bottomright", "bottom",
+"bottomleft", "left", "topleft", "top", and "centre|center|middle"}
+
+\item{region}{Annotations will be placed in this region. A named numeric
+vector with elements 'xmin', 'xmax', 'ymin' and 'ymax' defining the region.
+x and y plot dimensions are scaled between 0 and 1. For example, to place in
+the top left quadrant of the plot: `region = c(xmin = 0, xmax = 0.5, ymin =
+0.5, ymax = 1)`}
+
+\item{min.size}{Minimum font size, in points. If provided, annotations that
+would need to be shrunk below this size to fit inside their drawing area
+will not be drawn. Defaults to 0 pt.}
+
+\item{grow}{If `TRUE` (the default), annotations will be grown as well as
+shrunk to fill their drawing areas}
+
+\item{reflow}{If `TRUE (`FALSE` by default), annotations will be reflowed
+(wrapped) to better fit their drawing areas}
 }
 \description{
 Add an annotation describing a linear model to a ggplot2 plot
 }
+\details{
+`geom_lmannotate()` uses the 'ggfittext' package to fit text to genes. All
+text drawing options available in `ggfittext::geom_fit_text()` (growing,
+reflowing, etc.) are also available here. For full details on how these
+options work, see the documentation for `ggfittext::geom_fit_text()`.
+
+Standard 'ggplot2' aesthetics for text are supported (see Aesthetics).
+}
+\section{Aesthetics}{
+
+
+\itemize{
+  \item x,y (required to fit the linear model)
+  \item colour
+  \item size
+  \item alpha
+  \item family
+  \item fontface
+  \item angle
+}
+}
+
