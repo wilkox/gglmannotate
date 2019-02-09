@@ -83,7 +83,7 @@ GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
     padding.y <- grid::unit(1, "mm")
     place <- "topright"
     min.size <- 0
-    grow <- FALSE
+    grow <- TRUE
     reflow <- FALSE
     height <- NULL
 
@@ -98,15 +98,26 @@ GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
     t_data$xmin <- p_xmin
     t_data$xmax <- p_xmax
 
-    # To set the y limits for this annotation's drawing area, divide the y
-    # dimension of the panel's text drawing area into n horizontal slices where
-    # n is the number of annotations to be drawn in that panel. This annotation
+    # Two algorithms for placing annotations within the panel text drawing
+    # area, depending on how many groups are to be placed
+    #
+    # If there are six or fewer groups in this panel, it is better on balance
+    # to use a fixed y-height, otherwise the annotations can end up weirdly
+    # spread out
+    if(data$group_n[1] <= 6) {
+      slice_y_height <- (p_ymax - p_ymin) / 6
+      t_data$ymax <- p_ymax - ((data$group_i[1] - 1) * slice_y_height)
+      t_data$ymin <- p_ymax - (data$group_i[1] * slice_y_height)
+
+    # If there are seven or more groups for this panel, divide the y dimension
+    # of the panel's text drawing area into n horizontal slices where n is
+    # the number of annotations to be drawn in that panel. This annotation
     # will be assigned the ith slice
-    message("group n is ", data$group_n[1])
-    slice_y_height <- (p_ymax - p_ymin) / data$group_n[1]
-    message("slice_y_height is ", slice_y_height)
-    t_data$ymax <- p_ymax - ((data$group_i[1] - 1) * slice_y_height)
-    t_data$ymin <- p_ymax - (data$group_i[1] * slice_y_height)
+    } else {
+      slice_y_height <- (p_ymax - p_ymin) / data$group_n[1]
+      t_data$ymax <- p_ymax - ((data$group_i[1] - 1) * slice_y_height)
+      t_data$ymin <- p_ymax - (data$group_i[1] * slice_y_height)
+    }
 
     # Use ggfittext's fittexttree to draw the text
     gt <- grid::gTree(
