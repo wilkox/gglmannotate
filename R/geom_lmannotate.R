@@ -2,17 +2,15 @@
 #'
 #' @param mapping,data,stat,position,na.rm,show.legend,inherit.aes,... As
 #' standard for ggplot2
-#' @param facet_mode If TRUE (FALSE by default), will draw every annotation in
-#' the top right corner regardless of how many groups there are
 #'
 #' @export
 geom_lmannotate <- function(mapping = NULL, data = NULL, stat = "identity",
                                 position = "identity", na.rm = FALSE, show.legend = NA, 
-                                inherit.aes = TRUE, facet_mode = FALSE, ...) {
+                                inherit.aes = TRUE, ...) {
   ggplot2::layer(
     geom = GeomLmAnnotate, mapping = mapping, data = data, stat = stat, 
     position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-    params = list(na.rm = na.rm, facet_mode = facet_mode, ...)
+    params = list(na.rm = na.rm, ...)
   )
 }
 
@@ -30,7 +28,25 @@ GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
 
   draw_key = ggplot2::draw_key_blank,
 
-  draw_group = function(data, panel_params, coord, facet_mode) {
+  setup_data = function(data, params) {
+
+    # To optimise automatic placement of the annotations, it is useful to know
+    # two things: the number of groups to be drawn in each panel, and the
+    # ordered position of a given group within a panel. These will be
+    # calculated and stored as data variables 'group_n' and 'group_i'
+    panels <- split(data, data$PANEL)
+    panels <- lapply(panels, function(panel) {
+      groups <- unique(panel$group)
+      group_n <- length(groups)
+      panel$group_n <- rep(group_n, nrow(panel))
+      panel$group_i <- match(panel$group, sort(groups))
+      panel
+    })
+    data <- do.call(rbind, panels)
+    data
+  },
+
+  draw_group = function(data, panel_params, coord) {
 
     # Must have at least two points to draw a line
     if (nrow(data) < 2) return(grid::nullGrob())
@@ -53,35 +69,44 @@ GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
       signif(glance$p.value, 2)
     )
 
-    # Build the basic parameters for the text
+    # Set up the data frame to pass on to makecontent.fittexttree
     t_data <- data[1, ]
+
+    # Set the graphical parameters for the text
+    t_data$label <- label
     t_data$colour <- ifelse(is.na(data$colour[1]), "black", data$colour[1])
     t_data$angle <- 0
     t_data$size <- 10
-    t_data$label <- label
+
+    # Set the text placement and resizing parameters
     padding.x <- grid::unit(1, "mm")
     padding.y <- grid::unit(1, "mm")
     place <- "topright"
     min.size <- 0
     grow <- FALSE
-    reflow <- TRUE
+    reflow <- FALSE
     height <- NULL
 
-    t_data$xmin <- 0.25
-    t_data$xmax <- 1
+    # These parameters define the text drawing area for all annotations to be
+    # drawn on a panel
+    p_xmin <- 0
+    p_xmax <- 1
+    p_ymin <- 0.5
+    p_ymax <- 1
 
-    # If there is only one group, or if facet_mode is set, give it the
-    # top-right quadrant to play with
-    if (data$group[1] == -1 | facet_mode) {
-      t_data$ymin <- 0.5
-      t_data$ymax <- 1
+    # Set the x limits for this annotation's drawing area
+    t_data$xmin <- p_xmin
+    t_data$xmax <- p_xmax
 
-    # If there is more than one group, partition the y-dimension
-    } else {
-      n_groups <- 7
-      t_data$ymax <- 1 - ((data$group[1] - 1) * 0.5 / n_groups)
-      t_data$ymin <- t_data$ymax - (0.5 / n_groups)
-    }
+    # To set the y limits for this annotation's drawing area, divide the y
+    # dimension of the panel's text drawing area into n horizontal slices where
+    # n is the number of annotations to be drawn in that panel. This annotation
+    # will be assigned the ith slice
+    message("group n is ", data$group_n[1])
+    slice_y_height <- (p_ymax - p_ymin) / data$group_n[1]
+    message("slice_y_height is ", slice_y_height)
+    t_data$ymax <- p_ymax - ((data$group_i[1] - 1) * slice_y_height)
+    t_data$ymin <- p_ymax - (data$group_i[1] * slice_y_height)
 
     # Use ggfittext's fittexttree to draw the text
     gt <- grid::gTree(
