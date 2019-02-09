@@ -1,4 +1,6 @@
 
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+
 **gglmannotate** annotates a ggplot2 with a description of a linear
 model.
 
