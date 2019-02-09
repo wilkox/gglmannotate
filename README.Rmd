@@ -45,9 +45,7 @@ ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
   geom_lmannotate()
 ```
 
-If you want to facet the plot, the description can be fixed in the upper right
-corner with `facet_mode = TRUE`. Multiple groups in each facet are not
-supported well.
+Faceting is also supported.
 
 ```{r}
 ggplot(mpg, aes(x = displ, y = hwy)) +
@@ -55,5 +53,21 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_smooth(method = "lm") +
   geom_lmannotate(facet_mode = TRUE) +
   facet_wrap(~ class)
+```
+
+# Customising the annotation text
+
+The annotation can be changed from the default by setting the `glue_exp`
+argument to `geom_lmannotate()`, which will be parsed with the `glue()`
+function from the [glue](https://glue.tidyverse.org) package. This allows
+interpolation of R variables and expressions. The linear model object (the
+output of `lm()`) is available inside the glue expression as the variable
+`model`. For example:
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, colour = trans)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_lmannotate(glue_exp = "Max residual: {signif(max(model$residuals), 2)}")
 ```
 

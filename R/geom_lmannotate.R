@@ -2,15 +2,35 @@
 #'
 #' @param mapping,data,stat,position,na.rm,show.legend,inherit.aes,... As
 #' standard for ggplot2
+#' @param glue_exp An expression to be parsed by `glue::glue()`, to form the
+#' annotation describing each linear model. The fitted model object returned by
+#' `lm()` is available as the variable `model`
 #'
 #' @export
-geom_lmannotate <- function(mapping = NULL, data = NULL, stat = "identity",
-                                position = "identity", na.rm = FALSE, show.legend = NA, 
-                                inherit.aes = TRUE, ...) {
+geom_lmannotate <- function(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  glue_exp = NULL,
+  ...
+) {
   ggplot2::layer(
-    geom = GeomLmAnnotate, mapping = mapping, data = data, stat = stat, 
-    position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-    params = list(na.rm = na.rm, ...)
+    geom = GeomLmAnnotate,
+    mapping = mapping,
+    data = data,
+    stat = stat,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      glue_exp = glue_exp,
+      ...
+    )
   )
 }
 
@@ -46,28 +66,34 @@ GeomLmAnnotate <- ggplot2::ggproto("GeomLmAnnotate", ggplot2::Geom,
     data
   },
 
-  draw_group = function(data, panel_params, coord) {
+  draw_group = function(data, panel_params, coord, glue_exp = NULL) {
 
     # Must have at least two points to draw a line
     if (nrow(data) < 2) return(grid::nullGrob())
 
     coords <- coord$transform(data, panel_params)
 
-    # Fit the lm and extract parameters with broom
+    # Fit the lm
+    model <- lm(y ~ x, data)
     glance <- broom::glance(lm(y ~ x, data))
     tidy <- broom::tidy(lm(y ~ x, data))
 
     # Build a description of the model
-    label <- stringr::str_c(
-      "Adj.\u00A0R\u00B2\u00A0=\u00A0",
-      signif(glance$adj.r.squared, 2),
-      ", intercept\u00A0=\u00A0",
-      signif(tidy$estimate[1], 2),
-      ", slope\u00A0=\u00A0",
-      stringr::str_replace(signif(tidy$estimate[2], 2), "-", "\u2212"),
-      ", p\u00A0=\u00A0",
-      signif(glance$p.value, 2)
-    )
+    xxx <- stringr::str_replace("x", "x", "x")
+    if (is.null(glue_exp)) {
+      glue_exp <- "Adj.\u00A0R\u00B2\u00A0=\u00A0\\
+                      {signif(summary(model)$adj.r.squared, 2)}, \\
+                      intercept\u00A0=\u00A0\\
+                      {signif(model$coefficients[1], 2)}, \\
+                      slope\u00A0=\u00A0\\
+                      {stringr::str_replace(signif(\\
+                        model$coefficients[2], 2), '-', '\u2212')}, \\
+                      p\u00A0=\u00A0\\
+                      {f <- summary(model)$fstatistic;\\
+                        p <- pf(f[1], f[2], f[3], lower.tail = F);\\
+                        signif(p, 2)}"
+    }
+    label <- glue::glue(glue_exp)
 
     # Set up the data frame to pass on to makecontent.fittexttree
     t_data <- data[1, ]

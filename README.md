@@ -37,9 +37,7 @@ ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
-If you want to facet the plot, the description can be fixed in the upper
-right corner with `facet_mode = TRUE`. Multiple groups in each facet are
-not supported.
+Faceting is also supported.
 
 ``` r
 ggplot(mpg, aes(x = displ, y = hwy)) +
@@ -47,6 +45,26 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_smooth(method = "lm") +
   geom_lmannotate(facet_mode = TRUE) +
   facet_wrap(~ class)
+#> Warning: Ignoring unknown parameters: facet_mode
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+# Customising the annotation text
+
+The annotation can be changed from the default by setting the `glue_exp`
+argument to `geom_lmannotate()`, which will be parsed with the `glue()`
+function from the [glue](https://glue.tidyverse.org) package. This
+allows interpolation of R variables and expressions. The linear model
+object (the output of `lm()`) is available inside the glue expression as
+the variable `model`. For example:
+
+``` r
+ggplot(mpg, aes(x = displ, y = hwy, colour = trans)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_lmannotate(glue_exp = "Max residual: {signif(max(model$residuals), 2)}")
+#> Warning in qt((1 - level)/2, df): NaNs produced
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
