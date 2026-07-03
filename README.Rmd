@@ -13,9 +13,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+`lifecycle::badge('deprecated')`
 
 **gglmannotate** annotates a ggplot2 with a description of a linear model.
+
+# This package is no longer maintained
+
+Use [ggpmisc](https://docs.r4photobiology.info/ggpmisc/) or
+[ggpubr](https://rpkgs.datanovia.com/ggpubr/) instead.
 
 # Installation
 
