@@ -1,4 +1,7 @@
-`lifecycle::badge('deprecated')`
+<!-- badges: start -->
+
+[![Lifecycle: deprecated](https://img.shields.io/badge/lifecycle-deprecated-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#deprecated)
+<!-- badges: end -->
 
 **gglmannotate** annotates a ggplot2 with a description of a linear
 model.
