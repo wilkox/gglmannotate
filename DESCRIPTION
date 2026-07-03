@@ -11,9 +11,11 @@ Description: This package is intended to make it easier to quickly add some
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
 Imports: 
     ggplot2 (>= 2.2.1),
     ggfittext (>= 0.6.0),
     glue (>= 1.3.0),
-    stringr (>= 1.3.1)
+    stringr (>= 1.3.1),
+    lifecycle
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0

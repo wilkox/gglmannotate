@@ -1,8 +1,11 @@
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-
 **gglmannotate** annotates a ggplot2 with a description of a linear
 model.
+
+# This package is no longer maintained
+
+Use [ggpmisc](https://docs.r4photobiology.info/ggpmisc/) or
+[ggpubr](https://rpkgs.datanovia.com/ggpubr/) instead.
 
 # Installation
 
@@ -23,9 +26,10 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
   geom_smooth(method = "lm") +
   geom_lmannotate()
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
-<img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-1-1.png" alt="" width="100%" />
 
 Grouping, for example by adding a colour aesthetic, is automatically
 handled.
@@ -35,9 +39,10 @@ ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
   geom_point() +
   geom_smooth(method = "lm") +
   geom_lmannotate()
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="100%" />
 
 Faceting is also supported.
 
@@ -47,9 +52,10 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_smooth(method = "lm") +
   geom_lmannotate() +
   facet_wrap(~ class)
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="100%" />
 
 # Customising the annotation text
 
@@ -65,9 +71,10 @@ ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
   geom_point() +
   geom_smooth(method = "lm") +
   geom_lmannotate(glue_exp = "Max residual: {signif(max(model$residuals), 2)}")
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" alt="" width="100%" />
 
 # Customising the annotation placement
 
@@ -79,7 +86,7 @@ all scaled between 0 and 1, to define the region.
 The vertical and horizontal aliment of the text within the region can be
 set with `place`. It accepts the following values: “right”,
 “bottomright”, “bottom”, “bottomleft”, “left”, “topleft”, “top”, and
-“centre|center|middle”.
+“centre\|center\|middle”.
 
 ``` r
 ggplot(mpg, aes(x = hwy, y = cty, colour = class)) +
@@ -89,9 +96,10 @@ ggplot(mpg, aes(x = hwy, y = cty, colour = class)) +
     region = c(xmin = 0, xmax = 0.75, ymin = 0.75, ymax = 1),
     place = "topleft"
   )
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" alt="" width="100%" />
 
 The annotation text layout can be further tweaked with the `min.size`,
 `grow` and `reflow` options. See the [ggfittext
