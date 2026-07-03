@@ -1,4 +1,3 @@
-
 `lifecycle::badge('deprecated')`
 
 **gglmannotate** annotates a ggplot2 with a description of a linear
@@ -20,7 +19,7 @@ Install the development version from GitHub:
 To add a description of a linear model to a scatter plot built with
 ggplot2, just add `geom_lmannotate()`.
 
-``` r
+```r
 library(ggplot2)
 library(gglmannotate)
 
@@ -36,7 +35,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 Grouping, for example by adding a colour aesthetic, is automatically
 handled.
 
-``` r
+```r
 ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
   geom_point() +
   geom_smooth(method = "lm") +
@@ -48,7 +47,7 @@ ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
 
 Faceting is also supported.
 
-``` r
+```r
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
   geom_smooth(method = "lm") +
@@ -68,7 +67,7 @@ allows interpolation of R variables and expressions. The linear model
 object (the output of `lm()`) is available inside the glue expression as
 the variable `model`. For example:
 
-``` r
+```r
 ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
   geom_point() +
   geom_smooth(method = "lm") +
@@ -90,7 +89,7 @@ set with `place`. It accepts the following values: “right”,
 “bottomright”, “bottom”, “bottomleft”, “left”, “topleft”, “top”, and
 “centre\|center\|middle”.
 
-``` r
+```r
 ggplot(mpg, aes(x = hwy, y = cty, colour = class)) +
   geom_point() +
   geom_smooth(method = "lm") +
